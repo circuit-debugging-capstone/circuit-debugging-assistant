@@ -17,7 +17,11 @@ function App() {
           <div className="flex">
 
             <div className="p-4">
-              <Schematic fileName="circuit-schematic.sch" fileSize="24 KB"/>
+              <Schematic 
+                fileName="circuit-schematic.sch" 
+                fileSize="24 KB"
+                onFileSelect={(file) => console.log(file)}
+              />
             </div>
 
             <div className="p-4 h-[70vh]">
@@ -27,6 +31,7 @@ function App() {
                   { src: breadboardImage, name: "breadboard_left.jpg", size: "2.1 MB" },
                   { src: breadboardImage, name: "breadboard_right.jpg", size: "2.2 MB" },
                 ]}
+                onFileSelect={(file) => console.log(file)}
               />
             </div>
 
