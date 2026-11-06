@@ -1,0 +1,26 @@
+name: Frontend CI
+on: [push, pull_request]
+
+permsissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download the code
+        uses: actions/checkout@v6
+
+      - name: setup node
+        uses: actions/setup-node@v7
+        with:
+         node-version: '26'
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: check code formatting
+        run: npm run lint 
+
+      - name: build the project
+        run: npm run build
