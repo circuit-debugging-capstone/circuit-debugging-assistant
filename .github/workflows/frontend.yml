@@ -21,7 +21,9 @@ jobs:
         run: npm ci
 
       - name: check code formatting
-        run: npm run lint 
+        run: |
+          npm run lint
+          npm run prettier
 
       - name: build the project
         run: npm run build
