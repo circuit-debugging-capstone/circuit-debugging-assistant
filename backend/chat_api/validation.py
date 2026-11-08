@@ -24,10 +24,14 @@ def read_image(upload, field: str) -> ImageInput:
             if not mime_type:
                 raise ValidationError({field: "Use a JPEG, PNG, or WebP image."})
             if image.width * image.height > 20_000_000:
-                raise ValidationError({field: "Image must be 20 megapixels or smaller."})
+                raise ValidationError(
+                    {field: "Image must be 20 megapixels or smaller."}
+                )
             image.load()
     except (UnidentifiedImageError, OSError, ValueError) as exc:
-        raise ValidationError({field: "Upload a valid JPEG, PNG, or WebP image."}) from exc
+        raise ValidationError(
+            {field: "Upload a valid JPEG, PNG, or WebP image."}
+        ) from exc
     return ImageInput(mime_type=mime_type, data=data)
 
 
@@ -37,7 +41,9 @@ def parse_history(raw) -> list[ChatTurn]:
     try:
         turns = json.loads(raw)
     except (TypeError, ValueError) as exc:
-        raise ValidationError({"history": "Provide a JSON array of chat turns."}) from exc
+        raise ValidationError(
+            {"history": "Provide a JSON array of chat turns."}
+        ) from exc
     if not isinstance(turns, list) or len(turns) > MAX_HISTORY_TURNS:
         raise ValidationError({"history": "Provide at most 12 chat turns."})
     result = []
@@ -45,17 +51,30 @@ def parse_history(raw) -> list[ChatTurn]:
         if not isinstance(turn, dict) or set(turn) != {"role", "content"}:
             raise ValidationError({"history": "Each turn needs role and content."})
         role, content = turn["role"], turn["content"]
-        if role not in ("user", "assistant") or not isinstance(content, str) or not content.strip() or len(content) > MAX_TEXT_LENGTH:
-            raise ValidationError({"history": "Turns need a user or assistant role and 1–2000 characters of text."})
+        if (
+            role not in ("user", "assistant")
+            or not isinstance(content, str)
+            or not content.strip()
+            or len(content) > MAX_TEXT_LENGTH
+        ):
+            raise ValidationError(
+                {"history": "Use user or assistant and 1–2000 text characters."}
+            )
         result.append(ChatTurn(role=role, content=content.strip()))
     return result
 
 
 def parse_chat_request(data, files) -> ChatRequest:
     message = data.get("message", "")
-    if not isinstance(message, str) or not message.strip() or len(message) > MAX_TEXT_LENGTH:
+    if (
+        not isinstance(message, str)
+        or not message.strip()
+        or len(message) > MAX_TEXT_LENGTH
+    ):
         raise ValidationError({"message": "Enter 1–2000 characters of text."})
     history = parse_history(data.get("history"))
     reference = read_image(files.get("reference"), "reference")
     photo = read_image(files.get("photo"), "photo")
-    return ChatRequest(reference=reference, photo=photo, message=message.strip(), history=history)
+    return ChatRequest(
+        reference=reference, photo=photo, message=message.strip(), history=history
+    )

@@ -4,7 +4,6 @@ from openai import OpenAI
 
 from .base import ChatRequest
 
-
 SYSTEM_PROMPT = (
     "You are a prototype assistant for comparing a circuit reference image with "
     "photographs of a breadboard assembly. Describe only observations supported by "
@@ -28,19 +27,35 @@ class OpenAIProvider:
 
     def reply(self, request: ChatRequest) -> str:
         conversation = [
-            {"role": turn.role, "content": turn.content}
-            for turn in request.history
+            {"role": turn.role, "content": turn.content} for turn in request.history
         ]
-        conversation.append({
-            "role": "user",
-            "content": [
-                {"type": "input_text", "text": request.message},
-                {"type": "input_text", "text": "Reference circuit image:"},
-                {"type": "input_image", "image_url": image_url(request.reference.mime_type, request.reference.data), "detail": "high"},
-                {"type": "input_text", "text": "Photograph of the actual breadboard assembly:"},
-                {"type": "input_image", "image_url": image_url(request.photo.mime_type, request.photo.data), "detail": "high"},
-            ],
-        })
+        conversation.append(
+            {
+                "role": "user",
+                "content": [
+                    {"type": "input_text", "text": request.message},
+                    {"type": "input_text", "text": "Reference circuit image:"},
+                    {
+                        "type": "input_image",
+                        "image_url": image_url(
+                            request.reference.mime_type, request.reference.data
+                        ),
+                        "detail": "high",
+                    },
+                    {
+                        "type": "input_text",
+                        "text": "Photograph of the actual breadboard assembly:",
+                    },
+                    {
+                        "type": "input_image",
+                        "image_url": image_url(
+                            request.photo.mime_type, request.photo.data
+                        ),
+                        "detail": "high",
+                    },
+                ],
+            }
+        )
         response = self.client.responses.create(
             model=self.model,
             instructions=SYSTEM_PROMPT,
