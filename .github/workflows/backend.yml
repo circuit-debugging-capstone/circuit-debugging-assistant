@@ -1,0 +1,33 @@
+name: Backend CI
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download code
+        uses: actions/checkout@v6
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with: 
+          python-version: '3.13'
+          cache: 'pip'
+      
+      - name: install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: lint and format check
+        working-directory: backend
+        run: |
+          pip install flake8 black
+          flake8 .
+          black --check .
+
+      - name: run tests
+        working-directory: backend
+        run: python manage.py test
