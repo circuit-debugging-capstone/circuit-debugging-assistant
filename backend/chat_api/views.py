@@ -20,10 +20,16 @@ class ChatView(APIView):
             provider = get_provider()
         except ProviderConfigurationError as exc:
             logger.error("AI provider configuration error: %s", exc)
-            return Response({"error": "AI service is not configured."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response(
+                {"error": "AI service is not configured."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
         try:
             reply = provider.reply(chat_request)
         except Exception as exc:
             logger.warning("AI provider request failed: %s", type(exc).__name__)
-            return Response({"error": "AI service could not complete the request."}, status=status.HTTP_502_BAD_GATEWAY)
+            return Response(
+                {"error": "AI service could not complete the request."},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
         return Response({"reply": reply})

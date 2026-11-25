@@ -13,13 +13,7 @@ type ChatbotProps = {
 const API_URL = import.meta.env.VITE_CHAT_API_URL || "/api/chat/";
 
 export default function Chatbot({ referenceFile, photoFile }: ChatbotProps) {
-  const [messages, setMessages] = useState<ChatTurn[]>([
-    {
-      role: "assistant",
-      content:
-        "Upload a reference circuit image and a breadboard photo, or ask a question about the loaded sample circuit.",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatTurn[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +24,7 @@ export default function Chatbot({ referenceFile, photoFile }: ChatbotProps) {
 
     if (!referenceFile || !photoFile) {
       setError(
-        "Both a Reference Schematic image (PNG/JPG/WebP) and an Actual Circuit Photo are required."
+        "Both a Reference Schematic image (PNG/JPG/WebP) and an Actual Circuit Photo are required.",
       );
       return;
     }
@@ -38,8 +32,10 @@ export default function Chatbot({ referenceFile, photoFile }: ChatbotProps) {
     setError(null);
     setIsLoading(true);
 
-    // Keep only actual conversation turns (up to 12 prior turns per backend spec)
-    const priorHistory = messages.slice(-12);
+    const priorHistory = messages.slice(-12).map((turn) => ({
+      ...turn,
+      content: turn.content.slice(0, 2000),
+    }));
 
     const userTurn: ChatTurn = { role: "user", content: trimmed };
     setMessages((prev) => [...prev, userTurn]);
@@ -90,6 +86,12 @@ export default function Chatbot({ referenceFile, photoFile }: ChatbotProps) {
       <hr className="-mx-3 mt-3 mb-3" />
 
       <div className="space-y-3 min-h-0 flex-1 overflow-y-auto pr-1">
+        {messages.length === 0 && (
+          <p>
+            Both panels start with the same sample photo. Upload your schematic
+            and breadboard photo to compare them.
+          </p>
+        )}
         {messages.map((turn, index) => (
           <div
             key={index}
@@ -125,6 +127,7 @@ export default function Chatbot({ referenceFile, photoFile }: ChatbotProps) {
       <div className="flex gap-2 mt-3 shrink-0">
         <input
           type="text"
+          maxLength={2000}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {

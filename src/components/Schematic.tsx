@@ -30,7 +30,7 @@ export default function Schematic({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp,.sch"
+          accept="image/png,image/jpeg,image/webp"
           className="hidden"
           onChange={(event) => {
             const file = event.target.files?.[0];
@@ -46,7 +46,7 @@ export default function Schematic({
       <div className="border border-dashed gray-400 bg-gray-50 p-10 flex flex-col items-center justify-center">
         <p className="text-lg mb-6">Upload Reference Image (PNG, JPG, WebP)</p>
 
-        { fileName && fileSize && (
+        {fileName && fileSize && (
           <div className="border p-3 w-full bg-white">
             {previewUrl && (
               <img

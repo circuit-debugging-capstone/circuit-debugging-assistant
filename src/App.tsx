@@ -14,7 +14,7 @@ function formatFileSize(bytes: number): string {
 function App() {
   const [referenceFile, setReferenceFile] = useState<File | null>(null);
   const [referencePreview, setReferencePreview] = useState<string | undefined>(
-    breadboardImage
+    breadboardImage,
   );
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -36,7 +36,9 @@ function App() {
         setReferenceFile((prev) => prev ?? defaultRef);
         setPhotoFile((prev) => prev ?? defaultPhoto);
       })
-      .catch((err) => console.error("Failed to load default sample image:", err));
+      .catch((err) =>
+        console.error("Failed to load default sample image:", err),
+      );
   }, []);
 
   function handleSchematicSelect(file: File) {

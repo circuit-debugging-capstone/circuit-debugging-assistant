@@ -41,10 +41,13 @@ export default function Circuit({ images, onFileSelect }: CircuitProps) {
       <hr className="-mx-2 mt-2 mb-2 shrink-0" />
 
       <div className="min-h-0 flex-1 overflow-y-auto border border-dashed gray-400 bg-gray-50 p-10 flex flex-col items-center">
-        <p className="text-lg mb-6">Drop or upload breadboard photo</p>
+        <p className="text-lg mb-6">Upload a breadboard photo</p>
 
         {images.map((image, idx) => (
-          <div key={`${image.name}-${idx}`} className="border p-3 w-full mb-5 bg-white">
+          <div
+            key={`${image.name}-${idx}`}
+            className="border p-3 w-full mb-5 bg-white"
+          >
             <img src={image.src} alt={image.name} className="mb-3" />
             <p className="text-sm font-medium">{image.name}</p>
             <p className="text-sm text-gray-500">{image.size}</p>
